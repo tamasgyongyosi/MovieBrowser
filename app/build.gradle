@@ -68,10 +68,6 @@ dependencies {
     implementation navigation.navigationFragment
     implementation navigation.navigationUi
 
-    // Pagination
-    implementation pagination.pagingRuntime
-    implementation pagination.pagingCompose
-
     // Data
     implementation data.retrofit
     implementation data.retrofitConverter

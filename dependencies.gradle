@@ -18,9 +18,6 @@ ext {
             "retrofitRxAdapter"    : "3.0.0",
             "okhttp"               : "4.10.0",
 
-            // Pagination
-            "paging"               : "3.2.1",
-
             // Flow
             "coroutines"           : "1.6.4",
 
@@ -70,11 +67,6 @@ ext {
             "room"             : "androidx.room:room-runtime:${versions.room}",
             "roomKtx"          : "androidx.room:room-ktx:${versions.room}",
             "okhttpLogger"     : "com.squareup.okhttp3:logging-interceptor:${versions.okhttp}"
-    ]
-
-    pagination = [
-            "pagingRuntime": "androidx.paging:paging-runtime:${versions.paging}",
-            "pagingCompose": "androidx.paging:paging-compose:${versions.paging}"
     ]
 
     coroutines = [
