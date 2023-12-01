@@ -1,5 +1,6 @@
 package com.mbh.moviebrowser.data.local
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -10,8 +11,14 @@ import kotlinx.coroutines.flow.Flow
 interface MovieDao {
 
     @Query("SELECT * FROM movie")
-    fun observeAll(): Flow<List<LocalMovie>>
+    fun pagingSource(): PagingSource<Int, LocalMovie>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(users: List<LocalMovie>)
+
+    @Query("DELETE FROM movie")
+    suspend fun clearAll()
+
+    @Query("SELECT * FROM movie WHERE id=:id")
+    fun getById(id: Long): Flow<LocalMovie>
 }

@@ -30,7 +30,7 @@ ext {
             // JetPack
             "navigation"           : "2.5.3",
             "datastore"            : "1.0.0",
-            "room"                 : "2.4.3",
+            "room"                 : "2.6.1",
 
             // Util
             "coil"                 : "2.4.0",
@@ -69,6 +69,7 @@ ext {
             'dataStore'        : "androidx.datastore:datastore-preferences:${versions.datastore}",
             "room"             : "androidx.room:room-runtime:${versions.room}",
             "roomKtx"          : "androidx.room:room-ktx:${versions.room}",
+            "roomPaging"          : "androidx.room:room-paging:${versions.room}",
             "okhttpLogger"     : "com.squareup.okhttp3:logging-interceptor:${versions.okhttp}"
     ]
 

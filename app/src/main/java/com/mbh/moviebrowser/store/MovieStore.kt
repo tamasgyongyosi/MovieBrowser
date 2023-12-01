@@ -1,5 +1,6 @@
 package com.mbh.moviebrowser.store
 
+import androidx.paging.map
 import com.mbh.moviebrowser.data.FavoritesRepository
 import com.mbh.moviebrowser.data.MovieRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,10 +21,6 @@ class MovieStore @Inject constructor(
     }
     val detailsId: MutableStateFlow<Long> = MutableStateFlow(-1)
 
-    suspend fun refresh() {
-        movieRepository.refresh()
-    }
-
     fun addToFavorite(id: Long) {
         favoritesRepository.add(id)
     }
@@ -31,4 +28,6 @@ class MovieStore @Inject constructor(
     fun removeFromFavorite(id: Long) {
         favoritesRepository.remove(id)
     }
+
+    fun getMovie(id: Long) = movieRepository.getMovie(id)
 }

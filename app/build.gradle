@@ -7,12 +7,12 @@ plugins {
 }
 
 android {
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.mbh.moviebrowser"
         minSdk 24
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -78,6 +78,7 @@ dependencies {
     implementation data.dataStore
     implementation data.room
     implementation data.roomKtx
+    implementation data.roomPaging
     implementation data.okhttpLogger
 
     // Coroutines

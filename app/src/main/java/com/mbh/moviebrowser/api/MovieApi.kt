@@ -6,7 +6,7 @@ import com.mbh.moviebrowser.data.remote.RemoteMoviesResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface MoviesApi {
+interface MovieApi {
 
     @GET("trending/movie/day")
     suspend fun getTrendingMovies(@Query("page") page: Int = 1, @Query("api_key") apiKey: String = BuildConfig.API_KEY): RemoteMoviesResponse
