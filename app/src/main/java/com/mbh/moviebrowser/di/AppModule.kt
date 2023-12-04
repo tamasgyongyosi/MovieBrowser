@@ -9,6 +9,8 @@ import androidx.room.Room
 import com.mbh.moviebrowser.BuildConfig
 import com.mbh.moviebrowser.api.MovieApi
 import com.mbh.moviebrowser.config.Config
+import com.mbh.moviebrowser.config.Config.NETWORK_TIME_OUT
+import com.mbh.moviebrowser.config.Config.PAGE_SIZE
 import com.mbh.moviebrowser.data.MovieRemoteMediator
 import com.mbh.moviebrowser.data.local.LocalMovie
 import com.mbh.moviebrowser.data.local.MovieDao
@@ -30,9 +32,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
-    private const val NETWORK_TIME_OUT = 10L
-    private const val PAGE_SIZE = 20
 
     @Provides
     fun provideOkHttpClient(): OkHttpClient {

@@ -14,7 +14,6 @@ import com.mbh.moviebrowser.data.local.RemoteKey
 import com.mbh.moviebrowser.data.local.RemoteKeyDao
 import okio.IOException
 import retrofit2.HttpException
-import java.io.InvalidObjectException
 import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
@@ -41,7 +40,11 @@ class MovieRemoteMediator @Inject constructor(
 
                 LoadType.APPEND -> {
                     val remoteKeys = getRemoteKeyForLastItem(state)
-                    remoteKeys?.nextKey ?: 2
+                    remoteKeys?.nextKey ?: if (state.firstItemOrNull() == null) {
+                        1
+                    } else {
+                        return MediatorResult.Success(endOfPaginationReached = true)
+                    }
                 }
             }
             Log.i("Mediator", "page: $page")
