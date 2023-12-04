@@ -10,15 +10,16 @@ class GenreRepository @Inject constructor(
     private val movieApi: MovieApi
 ) {
 
-    private val genres = ArrayList<Genre>()
+    private var genres = emptyList<Genre>()
 
     suspend fun get(): List<Genre> {
-        return if (genres.isEmpty()) {
-            movieApi.getGenres().results.also {
-                genres.addAll(it)
+        return genres.ifEmpty {
+            movieApi.getGenres().results.also { results ->
+                genres.toMutableList().also {
+                    it.addAll(results)
+                    genres = it
+                }
             }
-        } else {
-            genres
         }
     }
 }

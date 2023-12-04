@@ -25,6 +25,7 @@ import androidx.compose.ui.zIndex
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
+import com.mbh.moviebrowser.R
 import com.mbh.moviebrowser.config.Config
 import com.mbh.moviebrowser.domain.Movie
 
@@ -39,9 +40,9 @@ fun MovieListScreen(viewModel: MovieListViewModel, onDetailsClicked: (Movie) -> 
 @Composable
 fun MovieListScreenUI(movies: LazyPagingItems<Movie>, onDetailsClicked: (Movie) -> Unit) {
     LazyColumn(modifier = Modifier.fillMaxWidth()) {
-        items(movies.itemCount) { index ->
+        items(movies.itemCount) loop@ { index ->
             MovieListItem(
-                movie = movies[index]!!,
+                movie = movies[index] ?: return@loop,
                 onDetailsClicked,
             )
         }
@@ -64,6 +65,7 @@ private fun MovieListItem(
                 contentDescription = null,
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier.width(80.dp).zIndex(1.0f),
+                placeholder = painterResource(id = R.drawable.placeholder)
             )
             val image = if (movie.isFavorite) {
                 painterResource(id = android.R.drawable.btn_star_big_on)

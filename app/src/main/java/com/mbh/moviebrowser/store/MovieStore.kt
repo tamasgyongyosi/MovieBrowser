@@ -1,33 +1,16 @@
 package com.mbh.moviebrowser.store
 
-import androidx.paging.map
-import com.mbh.moviebrowser.data.FavoritesRepository
 import com.mbh.moviebrowser.data.MovieRepository
+import com.mbh.moviebrowser.domain.Movie
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class MovieStore @Inject constructor(
-    private val movieRepository: MovieRepository,
-    private val favoritesRepository: FavoritesRepository
+    movieRepository: MovieRepository
 ) {
 
-    val movies = combine(movieRepository.getMovies(), favoritesRepository.get()) { movies, favorites ->
-        movies.map {
-            it.copy(isFavorite = favorites.contains(it.id))
-        }
-    }
-    val detailsId: MutableStateFlow<Long> = MutableStateFlow(-1)
-
-    fun addToFavorite(id: Long) {
-        favoritesRepository.add(id)
-    }
-
-    fun removeFromFavorite(id: Long) {
-        favoritesRepository.remove(id)
-    }
-
-    fun getMovie(id: Long) = movieRepository.getMovie(id)
+    val movies = movieRepository.getMovies()
+    val detailsMovie: MutableStateFlow<Movie?> = MutableStateFlow(null)
 }

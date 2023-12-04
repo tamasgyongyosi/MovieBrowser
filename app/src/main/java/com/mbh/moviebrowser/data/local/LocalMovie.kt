@@ -10,5 +10,6 @@ data class LocalMovie(
     val genres: String,
     val overview: String,
     val coverUrl: String,
-    val rating: Float
+    val rating: Float,
+    val position: Int,
 )

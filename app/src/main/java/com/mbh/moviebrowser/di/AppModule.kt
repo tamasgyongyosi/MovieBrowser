@@ -13,6 +13,7 @@ import com.mbh.moviebrowser.data.MovieRemoteMediator
 import com.mbh.moviebrowser.data.local.LocalMovie
 import com.mbh.moviebrowser.data.local.MovieDao
 import com.mbh.moviebrowser.data.local.MovieDatabase
+import com.mbh.moviebrowser.data.local.RemoteKeyDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,6 +32,7 @@ import javax.inject.Singleton
 object AppModule {
 
     private const val NETWORK_TIME_OUT = 10L
+    private const val PAGE_SIZE = 20
 
     @Provides
     fun provideOkHttpClient(): OkHttpClient {
@@ -73,8 +75,10 @@ object AppModule {
     }
 
     @Provides
-    @Singleton
     fun provideMovieDao(database: MovieDatabase): MovieDao = database.movieDao()
+
+    @Provides
+    fun provideRemoteKeyDao(database: MovieDatabase): RemoteKeyDao = database.remoteKeyDao()
 
     @Provides
     @Singleton
@@ -83,7 +87,11 @@ object AppModule {
         movieRemoteMediator: MovieRemoteMediator
     ): Pager<Int, LocalMovie> {
         return Pager(
-            config = PagingConfig(pageSize = 20),
+            config = PagingConfig(
+                pageSize = PAGE_SIZE,
+                initialLoadSize = 3 * PAGE_SIZE,
+                enablePlaceholders = true
+            ),
             remoteMediator = movieRemoteMediator,
             pagingSourceFactory = {
                 movieDao.pagingSource()

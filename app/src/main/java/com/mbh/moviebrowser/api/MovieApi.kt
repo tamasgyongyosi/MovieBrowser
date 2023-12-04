@@ -9,7 +9,7 @@ import retrofit2.http.Query
 interface MovieApi {
 
     @GET("trending/movie/day")
-    suspend fun getTrendingMovies(@Query("page") page: Int = 1, @Query("api_key") apiKey: String = BuildConfig.API_KEY): RemoteMoviesResponse
+    suspend fun getTrendingMovies(@Query("page") page: Int?, @Query("api_key") apiKey: String = BuildConfig.API_KEY): RemoteMoviesResponse
 
     @GET("genre/movie/list")
     suspend fun getGenres(@Query("api_key") apiKey: String = BuildConfig.API_KEY): GenresResponse

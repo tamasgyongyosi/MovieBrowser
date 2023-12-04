@@ -86,12 +86,11 @@ dependencies {
 
     // DI
     implementation di.hilt
-    kapt di.hiltKapt
 
     // Utils
     implementation utils.gson
 
     // Kapt
-    kapt annotation.dagger
+    kapt di.hiltKapt
     kapt annotation.room
 }
