@@ -1,5 +1,6 @@
 package com.mbh.moviebrowser.data
 
+import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -27,6 +28,7 @@ class MovieRemoteMediator @Inject constructor(
 
     override suspend fun load(loadType: LoadType, state: PagingState<Int, LocalMovie>): MediatorResult {
         return try {
+            Log.i("Mediator", loadType.name)
             val page = when (loadType) {
                 LoadType.REFRESH -> {
                     val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
@@ -39,11 +41,10 @@ class MovieRemoteMediator @Inject constructor(
 
                 LoadType.APPEND -> {
                     val remoteKeys = getRemoteKeyForLastItem(state)
-                        ?: throw InvalidObjectException("Result is empty")
-                    remoteKeys.nextKey ?: return MediatorResult.Success(endOfPaginationReached = true)
+                    remoteKeys?.nextKey ?: 2
                 }
             }
-
+            Log.i("Mediator", "page: $page")
             val response = movieApi.getTrendingMovies(
                 page = page
             )
@@ -73,8 +74,8 @@ class MovieRemoteMediator @Inject constructor(
     }
 
     private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, LocalMovie>): RemoteKey? {
-        return state.lastItemOrNull()?.let { news ->
-            movieDatabase.withTransaction { remoteKeyDao.remoteKeyByMovieId(news.id) }
+        return state.lastItemOrNull()?.let { movie ->
+            movieDatabase.withTransaction { remoteKeyDao.remoteKeyByMovieId(movie.id) }
         }
     }
 
