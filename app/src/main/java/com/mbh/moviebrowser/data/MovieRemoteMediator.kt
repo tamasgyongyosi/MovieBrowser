@@ -63,7 +63,7 @@ class MovieRemoteMediator @Inject constructor(
                     RemoteKey(movieId = it.id, prevKey = prevKey, nextKey = nextKey)
                 }
                 remoteKeyDao.insertAll(keys)
-                movieDao.insertAll(response.results.toLocal(genreRepository.get(), page))
+                movieDao.insertAll(response.results.toLocal(genreRepository.get()))
             }
             return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
         } catch (e: IOException) {

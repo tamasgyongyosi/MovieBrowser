@@ -5,7 +5,7 @@ import com.mbh.moviebrowser.data.remote.Genre
 import com.mbh.moviebrowser.data.remote.RemoteMovie
 import com.mbh.moviebrowser.domain.Movie
 
-fun RemoteMovie.toLocal(genres: List<Genre>, position: Int) = LocalMovie(
+fun RemoteMovie.toLocal(genres: List<Genre>) = LocalMovie(
     id = id,
     title = title,
     genres = this.genres.joinToString { genreId ->
@@ -14,14 +14,11 @@ fun RemoteMovie.toLocal(genres: List<Genre>, position: Int) = LocalMovie(
     },
     overview = overview,
     coverUrl = coverUrl,
-    rating = rating,
-    position = position
+    rating = rating
 )
 
 @JvmName("remoteToLocal")
-fun List<RemoteMovie>.toLocal(genres: List<Genre>, page: Int) = mapIndexed { index, remoteMovie ->
-    remoteMovie.toLocal(genres, (page * 20) + index)
-}
+fun List<RemoteMovie>.toLocal(genres: List<Genre>) = map { it.toLocal(genres) }
 
 fun LocalMovie.toExternal() = Movie(
     id = id,
