@@ -39,12 +39,18 @@ fun MovieListScreen(viewModel: MovieListViewModel, onDetailsClicked: (Movie) -> 
 
 @Composable
 fun MovieListScreenUI(movies: LazyPagingItems<Movie>, onDetailsClicked: (Movie) -> Unit) {
-    LazyColumn(modifier = Modifier.fillMaxWidth()) {
-        items(movies.itemCount) loop@ { index ->
-            MovieListItem(
-                movie = movies[index] ?: return@loop,
-                onDetailsClicked,
-            )
+    if (movies.itemCount == 0) {
+        return
+    } else {
+        LazyColumn(modifier = Modifier.fillMaxWidth()) {
+            items(movies.itemCount) { index ->
+                movies[index]?.let {
+                    MovieListItem(
+                        movie = it,
+                        onDetailsClicked,
+                    )
+                }
+            }
         }
     }
 }
@@ -55,17 +61,21 @@ private fun MovieListItem(
     onDetailsClicked: (Movie) -> Unit,
 ) {
     Row(
-        Modifier.padding(horizontal = 16.dp, vertical = 8.dp).clickable {
-            onDetailsClicked(movie)
-        },
+        Modifier
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .clickable {
+                onDetailsClicked(movie)
+            },
     ) {
         Box {
             AsyncImage(
-                model = Config.IMAGE_BASE_URL + movie.coverUrl,
+                model = Config.IMAGE_W200_BASE_URL + movie.coverUrl,
                 contentDescription = null,
                 contentScale = ContentScale.FillWidth,
-                modifier = Modifier.width(80.dp).zIndex(1.0f),
-                placeholder = painterResource(id = R.drawable.placeholder)
+                modifier = Modifier
+                    .width(80.dp)
+                    .zIndex(1.0f),
+                placeholder = painterResource(id = R.drawable.placeholder_w200)
             )
             val image = if (movie.isFavorite) {
                 painterResource(id = android.R.drawable.btn_star_big_on)
@@ -75,7 +85,10 @@ private fun MovieListItem(
             Image(
                 painter = image,
                 contentDescription = null,
-                modifier = Modifier.padding(all = 4.dp).zIndex(2.0f).align(Alignment.TopEnd),
+                modifier = Modifier
+                    .padding(all = 4.dp)
+                    .zIndex(2.0f)
+                    .align(Alignment.TopEnd),
             )
         }
         Spacer(modifier = Modifier.width(16.dp))

@@ -23,9 +23,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.mbh.moviebrowser.R
 import com.mbh.moviebrowser.config.Config
 import com.mbh.moviebrowser.domain.Movie
-import kotlinx.coroutines.flow.catch
 
 @Composable
 fun MovieDetailsScreen(viewModel: MovieDetailsViewModel) {
@@ -55,9 +55,10 @@ fun MovieDetailsScreenUI(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         AsyncImage(
-            model = Config.IMAGE_BASE_URL + movie.coverUrl,
+            model = Config.IMAGE_W500_BASE_URL + movie.coverUrl,
             contentDescription = null,
             contentScale = ContentScale.Crop,
+            placeholder = painterResource(id = R.drawable.placeholder_w500)
         )
         Spacer(modifier = Modifier.height(24.dp))
         val image = if (movie.isFavorite) {

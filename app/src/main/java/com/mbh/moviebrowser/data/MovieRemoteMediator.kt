@@ -11,11 +11,17 @@ import com.mbh.moviebrowser.data.local.MovieDao
 import com.mbh.moviebrowser.data.local.MovieDatabase
 import com.mbh.moviebrowser.data.local.RemoteKey
 import com.mbh.moviebrowser.data.local.RemoteKeyDao
+import com.mbh.moviebrowser.data.remote.Genre
+import com.mbh.moviebrowser.data.remote.RemoteMovie
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.joinAll
 import okio.IOException
 import retrofit2.HttpException
 import javax.inject.Inject
 
-@OptIn(ExperimentalPagingApi::class)
+@OptIn(ExperimentalPagingApi::class, DelicateCoroutinesApi::class)
 class MovieRemoteMediator @Inject constructor(
     private val movieDatabase: MovieDatabase,
     private val movieDao: MovieDao,
@@ -28,8 +34,7 @@ class MovieRemoteMediator @Inject constructor(
         return try {
             val page = when (loadType) {
                 LoadType.REFRESH -> {
-                    val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
-                    remoteKeys?.nextKey?.minus(1) ?: 1
+                    1
                 }
 
                 LoadType.PREPEND -> {
@@ -37,19 +42,31 @@ class MovieRemoteMediator @Inject constructor(
                 }
 
                 LoadType.APPEND -> {
-                    val remoteKeys = getRemoteKeyForLastItem(state)
-                    remoteKeys?.nextKey ?: if (state.firstItemOrNull() == null) {
-                        1
-                    } else {
-                        return MediatorResult.Success(endOfPaginationReached = true)
-                    }
+                    getRemoteKeyForLastItem(state)?.nextKey ?: return MediatorResult.Success(endOfPaginationReached = state.firstItemOrNull() != null)
                 }
             }
-            val response = movieApi.getTrendingMovies(
-                page = page
+
+            if (loadType == LoadType.REFRESH) {
+                genreRepository.clearAll()
+            }
+
+            var remoteMovies = emptyList<RemoteMovie>()
+            var genres = emptyList<Genre>()
+
+            joinAll(
+                GlobalScope.async {
+                    remoteMovies = movieApi.getTrendingMovies(page = page).results
+                },
+                GlobalScope.async {
+                    genres = genreRepository.genres.ifEmpty {
+                        movieApi.getGenres().results.also {
+                            genreRepository.addAll(it)
+                        }
+                    }
+                }
             )
 
-            val endOfPaginationReached = response.results.size < state.config.pageSize
+            val endOfPaginationReached = remoteMovies.size < state.config.pageSize
 
             movieDatabase.withTransaction {
                 if (loadType == LoadType.REFRESH) {
@@ -59,11 +76,11 @@ class MovieRemoteMediator @Inject constructor(
 
                 val prevKey = if (page == 1) null else page - 1
                 val nextKey = if (endOfPaginationReached) null else page + 1
-                val keys = response.results.map {
+                val keys = remoteMovies.map {
                     RemoteKey(movieId = it.id, prevKey = prevKey, nextKey = nextKey)
                 }
                 remoteKeyDao.insertAll(keys)
-                movieDao.insertAll(response.results.toLocal(genreRepository.get()))
+                movieDao.insertAll(remoteMovies.toLocal(genres))
             }
             return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
         } catch (e: IOException) {
@@ -76,14 +93,6 @@ class MovieRemoteMediator @Inject constructor(
     private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, LocalMovie>): RemoteKey? {
         return state.lastItemOrNull()?.let { movie ->
             movieDatabase.withTransaction { remoteKeyDao.remoteKeyByMovieId(movie.id) }
-        }
-    }
-
-    private suspend fun getRemoteKeyClosestToCurrentPosition(state: PagingState<Int, LocalMovie>): RemoteKey? {
-        return state.anchorPosition?.let { position ->
-            state.closestItemToPosition(position)?.id?.let { id ->
-                movieDatabase.withTransaction { remoteKeyDao.remoteKeyByMovieId(id) }
-            }
         }
     }
 }

@@ -88,7 +88,7 @@ object AppModule {
         return Pager(
             config = PagingConfig(
                 pageSize = PAGE_SIZE,
-                initialLoadSize = 3 * PAGE_SIZE,
+                initialLoadSize = 2 * PAGE_SIZE,
                 enablePlaceholders = true
             ),
             remoteMediator = movieRemoteMediator,
