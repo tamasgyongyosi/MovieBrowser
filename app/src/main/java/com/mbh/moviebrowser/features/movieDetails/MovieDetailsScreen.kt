@@ -58,7 +58,7 @@ fun MovieDetailsScreenUI(
             model = Config.IMAGE_W500_BASE_URL + movie.coverUrl,
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            placeholder = painterResource(id = R.drawable.placeholder_w500)
+            error = painterResource(id = R.drawable.placeholder_w500)
         )
         Spacer(modifier = Modifier.height(24.dp))
         val image = if (movie.isFavorite) {

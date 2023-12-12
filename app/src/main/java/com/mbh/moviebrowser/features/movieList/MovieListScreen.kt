@@ -74,8 +74,9 @@ private fun MovieListItem(
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier
                     .width(80.dp)
+                    .height(120.dp)
                     .zIndex(1.0f),
-                placeholder = painterResource(id = R.drawable.placeholder_w200)
+                error = painterResource(id = R.drawable.placeholder_w200)
             )
             val image = if (movie.isFavorite) {
                 painterResource(id = android.R.drawable.btn_star_big_on)
